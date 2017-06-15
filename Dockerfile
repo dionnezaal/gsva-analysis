@@ -11,4 +11,4 @@ RUN R -e "install.packages(c('qusage', 'GSEABase', 'GSVA'), repos='http://biocon
 COPY . /usr/local/src/scripts/
 WORKDIR /usr/local/src/scripts/
 
-RUN ["chmod", "+x", "calculate_GSVA_scores_v1.1.R"]
+RUN ["chmod", "+x", "calculate_GSVA_scores.R"]
