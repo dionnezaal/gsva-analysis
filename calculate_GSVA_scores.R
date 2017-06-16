@@ -89,7 +89,7 @@ stable_id: ", study_id, "_gsva_scores
 case_list_name: Tumor Samples with GSVA data
 case_list_description: All samples with GSVA data
 case_list_category: all_cases_with_gsva_data
-case_list_ids:    ", paste0(colnames(gsva_scores), collapse = "\t")), collapse = "")
+case_list_ids:    ", paste0(colnames(gsva_scores)[2:ncol(gsva_scores)], collapse = "\t")), collapse = "")
 write(case_list, paste0(prefix_out, "_cases_GSVA.txt"))
 
 cat(paste0("\n\n---> Meta files written to ", prefix_out, "_meta_gsva_scores.txt, ", prefix_out, "_meta_gsva_pvalues.txt and ", prefix_out, "_case_list.txt\n\n"))
