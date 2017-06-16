@@ -4,6 +4,6 @@
 ## Run the analysis
 input variables: expression data file, geneset file, number of cores, number of bootstraps, prefix output files
 
-``` sudo docker run --rm -v ~/GSVA/acc_files/:/study:ro -v ~/GSVA/results_acc_tcga/:/outdir calc-gsva-scores ./calculate_GSVA_scores.R /study/data_RNA_Seq_v2_expression_median.txt /study/meta_RNA_Seq_v2_expression_median.txt /study/msigdb.v6.0.entrez.gmt 5 500 /outdir/acc_tcga ```
+``` sudo docker run --rm -v ~/$STUDY_DIRECTORY/:/study:ro -v ~/$OUTPUT_DIRECTORY/:/outdir calc-gsva-scores ./calculate_GSVA_scores.R /study/$EXPRESSION_FILE /study/$META_EXPRESSION_FILE /study/$GENESET_FILE $NUMBER_OF_CORES $NUMBER_OF_BOOTSTRAPS /outdir/$PREFIX_OUTPUT_FILES ```
 
 

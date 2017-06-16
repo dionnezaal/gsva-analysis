@@ -68,7 +68,7 @@ datatype: GSVA-SCORE
 stable_id: gsva_scores
 source_stable_id: ", source_stable_id, "
 profile_name: GSVA scores
-profile_description: GSVA scores for MSigDB v6.0 genesets calculated with GSVA version ", gsva_version,", R version ", r_version, "
+profile_description: GSVA scores for MSigDB v6.0 and cbioportal legacy genesets calculated with GSVA version ", gsva_version,", R version ", r_version, "
 data_filename: ", tail(strsplit(prefix_out, "/")[[1]],1), "_gsva_scores.txt
 geneset_def_version: msigdb_v6.0_and_cbio")
 write(meta_scores, paste0(prefix_out, "_meta_gsva_scores.txt"))
