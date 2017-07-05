@@ -68,28 +68,48 @@ datatype: GSVA-SCORE
 stable_id: gsva_scores
 source_stable_id: ", source_stable_id, "
 profile_name: GSVA scores
-profile_description: GSVA scores for MSigDB v6.0 and cbioportal legacy genesets calculated with GSVA version ", gsva_version,", R version ", r_version, "
+profile_description: GSVA scores for MSigDB v6.0 genesets and cbioportal legacy genesets calculated with GSVA version ", gsva_version,", R version ", r_version, "
 data_filename: ", tail(strsplit(prefix_out, "/")[[1]],1), "_gsva_scores.txt
 geneset_def_version: msigdb_v6.0_and_cbio")
 write(meta_scores, paste0(prefix_out, "_meta_gsva_scores.txt"))
 
-meta_pvalues <- paste0("cancer_study_identifier: ", study_id, "
+if (n_bootstrap > 0){
+	meta_pvalues <- paste0("cancer_study_identifier: ", study_id, "
+	genetic_alteration_type: GENESET_SCORE
+	datatype: P-VALUE
+	stable_id: gsva_pvalues
+	source_stable_id: gsva_scores
+	profile_name: GSVA p-values
+	profile_description: P-values calculated with GSVA boostrapping method (n=", n_bootstrap, ").
+	data_filename: ", tail(strsplit(prefix_out, "/")[[1]],1), "_gsva_pvalues.txt
+	geneset_def_version: msigdb_v6.0_and_cbio")
+	write(meta_pvalues, paste0(prefix_out, "_meta_gsva_pvalues.txt"))
+} else {
+	# create dummy p-values instead of empty file
+	dummy_pvalues <- (gsva_result$es.obs * 0) + 0.01
+	gsva_pvalues <- data.frame("geneset_id" = rownames(gsva_result$es.obs), dummy_pvalues, check.names = F)
+	colnames(gsva_pvalues) <- gsub("\\.", "-", colnames(gsva_pvalues))
+	write.table(gsva_pvalues, paste0(prefix_out, "_gsva_pvalues.txt"), quote = F, sep = "\t", col.names = T, row.names = F)
+
+	# create also meta p-value file
+	meta_pvalues <- paste0("cancer_study_identifier: ", study_id, "
 genetic_alteration_type: GENESET_SCORE
 datatype: P-VALUE
 stable_id: gsva_pvalues
 source_stable_id: gsva_scores
 profile_name: GSVA p-values
-profile_description: P-values calculated with GSVA boostrapping method (n=", n_bootstrap, ").
+profile_description: Dummy P-values, no bootstrap done.
 data_filename: ", tail(strsplit(prefix_out, "/")[[1]],1), "_gsva_pvalues.txt
 geneset_def_version: msigdb_v6.0_and_cbio")
-write(meta_pvalues, paste0(prefix_out, "_meta_gsva_pvalues.txt"))
+	write(meta_pvalues, paste0(prefix_out, "_meta_gsva_pvalues.txt"))
+}
 
 case_list <- paste0(c("cancer_study_identifier: ", study_id, "
 stable_id: ", study_id, "_gsva_scores
 case_list_name: Tumor Samples with GSVA data
 case_list_description: All samples with GSVA data
 case_list_category: all_cases_with_gsva_data
-case_list_ids:    ", paste0(colnames(gsva_scores)[2:ncol(gsva_scores)], collapse = "\t")), collapse = "")
+case_list_ids:    ", paste0(colnames(gsva_scores), collapse = "\t")), collapse = "")
 write(case_list, paste0(prefix_out, "_cases_GSVA.txt"))
 
 cat(paste0("\n\n---> Meta files written to ", prefix_out, "_meta_gsva_scores.txt, ", prefix_out, "_meta_gsva_pvalues.txt and ", prefix_out, "_case_list.txt\n\n"))
