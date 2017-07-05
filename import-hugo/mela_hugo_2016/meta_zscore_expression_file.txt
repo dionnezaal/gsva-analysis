@@ -1,0 +1,8 @@
+cancer_study_identifier: mela_hugo_2016
+genetic_alteration_type: MRNA_EXPRESSION
+datatype: Z-SCORE
+stable_id: rna_seq_mrna_median_Zscores
+show_profile_in_analysis_tab: false
+profile_name: Z-scores
+profile_description: Z-scores RNA-seq data
+data_filename: zscore_expression_file.txt

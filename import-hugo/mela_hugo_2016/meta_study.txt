@@ -1,0 +1,8 @@
+type_of_cancer: mel
+cancer_study_identifier: mela_hugo_2016
+name: Melanoma (Hugo et al., 2016)
+description: mRNA expressions in pre-treatment melanomas undergoing anti-PD-1 checkpoint inhibition therapy
+citation: Genomic and Transcriptomic Features of Response to Anti-PD-1 Therapy in Metastatic Melanoma, Hugo et al. Cell 2016
+pmid: 26997480
+short_name: Mela (Hugo)
+add_global_case_list: true

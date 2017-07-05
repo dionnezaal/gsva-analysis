@@ -1,0 +1,33 @@
+#SampleID	patient id	anatomical location	tissue	biopsy time
+#Sample identification	patient id	anatomical location	tissue	biopsy time
+#STRING	STRING	STRING	STRING	STRING
+#1	1	1	1	1
+SAMPLE_ID	PATIENT_ID	ANATOMICAL_LOCATION	TISSUE	TIME_BIOPSY
+GSM2069823	 Pt1	 L post. Thigh inf. SC	 Melanoma biopsies	 pre-treatment
+GSM2069824	 Pt2	 Lung	 Melanoma biopsies	 pre-treatment
+GSM2069825	 Pt4	 Adrenal	 Melanoma biopsies	 pre-treatment
+GSM2069826	 Pt5	 L Chestwall SC	 Melanoma biopsies	 pre-treatment
+GSM2069827	 Pt6	 L forearm SC	 Melanoma biopsies	 pre-treatment
+GSM2069828	 Pt7	 Crown/scalp SC	 Melanoma biopsies	 pre-treatment
+GSM2069829	 Pt8	 R leg SC	 Melanoma biopsies	 pre-treatment
+GSM2069830	 Pt9	 L forearm SC	 Melanoma biopsies	 pre-treatment
+GSM2069831	 Pt10	 Neck SC	 Melanoma biopsies	 pre-treatment
+GSM2069832	 Pt12	 L lower abdomen SC	 Melanoma biopsies	 pre-treatment
+GSM2069833	 Pt13	 Lower back SC	 Melanoma biopsies	 pre-treatment
+GSM2069834	 Pt14	 R neck SC	 Melanoma biopsies	 pre-treatment
+GSM2069835	 Pt15	 R clavicle LN	 Melanoma biopsies	 pre-treatment
+GSM2069836	 Pt16	 Lung	 Melanoma biopsies	 on-treatment
+GSM2069837	 Pt19	 Chest SC	 Melanoma biopsies	 pre-treatment
+GSM2069838	 Pt20	 L clavicle	 Melanoma biopsies	 pre-treatment
+GSM2069839	 Pt22	 Left Flank SC	 Melanoma biopsies	 pre-treatment
+GSM2069840	 Pt23	 Left Leg SC	 Melanoma biopsies	 pre-treatment
+GSM2069841	 Pt25	 L Outer Inguinal	 Melanoma biopsies	 pre-treatment
+GSM2069842	 Pt27	 R upper arm	 Melanoma biopsies	 pre-treatment
+GSM2069843	 Pt27	 R upper back	 Melanoma biopsies	 pre-treatment
+GSM2069844	 Pt28	 Scalp SC	 Melanoma biopsies	 pre-treatment
+GSM2069845	 Pt29	 Lung	 Melanoma biopsies	 pre-treatment
+GSM2069846	 Pt31	 Sigmoid colon	 Melanoma biopsies	 pre-treatment
+GSM2069847	 Pt32	 Abdominal wall	 Melanoma biopsies	 pre-treatment
+GSM2069848	 Pt35	 Flank	 Melanoma biopsies	 pre-treatment
+GSM2069849	 Pt37	 Small bowel	 Melanoma biopsies	 pre-treatment
+GSM2069850	 Pt38	 Cervical LN	 Melanoma biopsies	 pre-treatment

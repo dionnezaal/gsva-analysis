@@ -1,0 +1,32 @@
+#PatientID	age (yrs)	anti-pd-1 response	disease status	gender	overall survival (days)	previous mapki	study site	treatment	vital status	disease free status	overal survival (months)
+#Patient identification	age in years	anti-pd-1 response	disease status	gender	overall survival in days	previous mapk inhibitor (resistance to treatment can occur)	study site	treatment	vital status	disease free status	overal survival days in months (calculated from days divide by 30)
+#STRING	NUMBER	STRING	STRING	STRING	NUMBER	STRING	STRING	STRING	STRING	STRING	NUMBER
+#1	1	1	1	1	1	1	1	1	1	1	1
+PATIENT_ID	AGE	RESPONSE_ANTIPD1	DS_STATUS	GENDER	SURVIVAL_DAYS	PREVIOUS_MAPKI	STUDY_SITE	TREATMENT	 OS_STATUS	DFS_STATUS	OS_MONTHS
+ Pt1	66	Progressive Disease	Lung metastases	F	607	No	UCLA	Pembrolizumab	DECEASED	Recurred/Progressed	20
+ Pt2	55	Partial Response	All other visceral and distant metastasis	M	927	No	UCLA	Pembrolizumab	LIVING	Recurred/Progressed	30
+ Pt4	62	Partial Response	All other visceral and distant metastasis	M	948	Yes	UCLA	Pembrolizumab	LIVING	Recurred/Progressed	31
+ Pt5	61	Partial Response	All other visceral and distant metastasis	M	439	No	UCLA	Pembrolizumab	LIVING	Recurred/Progressed	14
+ Pt6	51	Partial Response	All other visceral and distant metastasis	M	882	Yes	UCLA	Pembrolizumab	LIVING	Recurred/Progressed	29
+ Pt7	55	Progressive Disease	All other visceral and distant metastasis	F	662	No	UCLA	Pembrolizumab	DECEASED	Recurred/Progressed	22
+ Pt8	69	Complete Response	Distant skin, subcutaneous, or nodal metastases	M	NA	No	UCLA	Pembrolizumab	LIVING	Recurred/Progressed	NA
+ Pt9	68	Complete Response	No distant metastases	M	1054	No	UCLA	Pembrolizumab	LIVING	DiseaseFree	35
+ Pt10	60	Progressive Disease	Distant skin, subcutaneous, or nodal metastases	M	387	Yes	UCLA	Pembrolizumab	LIVING	Recurred/Progressed	12
+ Pt12	59	Progressive Disease	All other visceral and distant metastasis	M	327	No	UCLA	Pembrolizumab	DECEASED	Recurred/Progressed	10
+ Pt13	53	Complete Response	All other visceral and distant metastasis	F	917	No	UCLA	Pembrolizumab	LIVING	Recurred/Progressed	30
+ Pt14	27	Progressive Disease	All other visceral and distant metastasis	F	54	No	UCLA	Pembrolizumab	LIVING	Recurred/Progressed	1
+ Pt15	70	Partial Response	Lung metastases	M	980	Yes	UCLA	Pembrolizumab	DECEASED	Recurred/Progressed	32
+ Pt16	19	Progressive Disease	Lung metastases	M	186	Yes	UCLA	Pembrolizumab	DECEASED	Recurred/Progressed	6
+ Pt19	45	Partial Response	All other visceral and distant metastasis	M	1060	No	UCLA	Pembrolizumab	LIVING	Recurred/Progressed	35
+ Pt20	63	Progressive Disease	All other visceral and distant metastasis	F	337	No	UCLA	Pembrolizumab	DECEASED	Recurred/Progressed	11
+ Pt22	55	Progressive Disease	All other visceral and distant metastasis	M	182	No	UCLA	Pembrolizumab	DECEASED	Recurred/Progressed	6
+ Pt23	63	Progressive Disease	All other visceral and distant metastasis	M	103	Yes	UCLA	Pembrolizumab	DECEASED	Recurred/Progressed	3
+ Pt25	74	Progressive Disease	All other visceral and distant metastasis	M	262	Yes	UCLA	Pembrolizumab	DECEASED	Recurred/Progressed	8
+ Pt27	83	Complete Response	All other visceral and distant metastasis	M	548	No	UCLA	Pembrolizumab	LIVING	Recurred/Progressed	18
+ Pt28	82	Partial Response	All other visceral and distant metastasis	M	439	No	UCLA	Pembrolizumab	DECEASED	Recurred/Progressed	14
+ Pt29	84	Progressive Disease	All other visceral and distant metastasis	M	269	Yes	UCLA	Pembrolizumab	DECEASED	Recurred/Progressed	8
+ Pt31	47	Progressive Disease	All other visceral and distant metastasis	M	704	No	VIC	Pembrolizumab	LIVING	Recurred/Progressed	23
+ Pt32	47	Progressive Disease	All other visceral and distant metastasis	M	171	Yes	VIC	Pembrolizumab	DECEASED	Recurred/Progressed	5
+ Pt35	65	Partial Response	All other visceral and distant metastasis	F	427	Yes	VIC	Pembrolizumab	LIVING	Recurred/Progressed	14
+ Pt37	70	Partial Response	All other visceral and distant metastasis	F	364	Yes	VIC	Pembrolizumab	LIVING	Recurred/Progressed	12
+ Pt38	57	Partial Response	All other visceral and distant metastasis	F	448	Yes	VIC	Pembrolizumab	LIVING	Recurred/Progressed	14

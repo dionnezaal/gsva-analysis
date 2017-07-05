@@ -1,0 +1,8 @@
+cancer_study_identifier: mela_hugo_2016
+genetic_alteration_type: MRNA_EXPRESSION
+datatype: CONTINUOUS
+stable_id: rna_seq_mrna
+show_profile_in_analysis_tab: false
+profile_name: Log2 FPKM values
+profile_description: Log2 FPKM values RNA-seq data
+data_filename: log2_expression_file.txt
