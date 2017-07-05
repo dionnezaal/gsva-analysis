@@ -3,14 +3,14 @@
 ###############################################################
 ## Script to perform GSVA analysis for studies in datahub    ##
 ## Input: expression file (rows: genes, columns: samples),   ##
-##		  meta expression file, geneset file (in gmt),       ##
-##		  number of cores to use for analysis, number of     ##
-## 		  bootstraps to use for analysis, prefix for output  ##
-## 		  files (with desired path)                          ##
+##		    meta expression file, geneset file (in gmt),       ##
+##		    number of cores to use for analysis, number of     ##
+## 		    bootstraps to use for analysis, prefix for output  ##
+## 		    files (with desired path)                          ##
 ## Output: GSVA score and p-value file (genesets in rows,    ##
-##		   samples in columns), meta score and p-value file, ##
-##         case list file and the Rdata from the analysis	 ##
-## Author: Dionne Zaal									     ##
+##		     samples in columns), meta score and p-value file, ##
+##         case list file and the Rdata from the analysis	   ##
+## Author: Dionne Zaal									                     ##
 ###############################################################
 
 start_time <- Sys.time()
