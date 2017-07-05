@@ -1,5 +1,18 @@
 #!/usr/bin/Rscript
-## Perform GSVA analysis
+
+###############################################################
+## Script to perform GSVA analysis for studies in datahub    ##
+## Input: expression file (rows: genes, columns: samples),   ##
+##		  meta expression file, geneset file (in gmt),       ##
+##		  number of cores to use for analysis, number of     ##
+## 		  bootstraps to use for analysis, prefix for output  ##
+## 		  files (with desired path)                          ##
+## Output: GSVA score and p-value file (genesets in rows,    ##
+##		   samples in columns), meta score and p-value file, ##
+##         case list file and the Rdata from the analysis	 ##
+## Author: Dionne Zaal									     ##
+###############################################################
+
 start_time <- Sys.time()
 cat("\n\n---> Load R libraries to perform the analysis: parallel, snow, qusage and GSVA\n\n")
 # Load necessary libraries
@@ -10,9 +23,11 @@ library("GSVA") # To perform GSVA analysis
 
 # Get arguments from command: 
 # [1] name (and path) of expression file
-# [2] name (and path) of geneset file
-# [3] number of cores to use for the analysis
-# [4] prefix for name outputfile
+# [2] name (and path) of meta expression file
+# [3] name (and path) of geneset file
+# [4] number of cores to use for the analysis
+# [5] number of bootstraps for the analysis
+# [6] prefix for name outputfile
 c_args <- commandArgs(TRUE)
 
 expr_file <- c_args[1]
@@ -73,6 +88,9 @@ data_filename: ", tail(strsplit(prefix_out, "/")[[1]],1), "_gsva_scores.txt
 geneset_def_version: msigdb_v6.0_and_cbio")
 write(meta_scores, paste0(prefix_out, "_meta_gsva_scores.txt"))
 
+# In case bootstrapping is done make meta file which indicates the amount of
+# bootstraps that were done, otherwise create a dummy pvalue file and
+# indicate this in the meta p-value file
 if (n_bootstrap > 0){
 	meta_pvalues <- paste0("cancer_study_identifier: ", study_id, "
 	genetic_alteration_type: GENESET_SCORE
