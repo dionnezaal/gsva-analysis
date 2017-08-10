@@ -15,7 +15,7 @@ dge <- DGEList(counts=dat)
 norm.factor <- calcNormFactors(dge)
 dat.norm <- cpm(norm.factor, normalized.lib.sizes=TRUE, prior.count=2, log=TRUE)
 
-# Import geneset file with gene symbols (maybe the transferal of symbol to entrez makes a change)
+# Import geneset file with gene symbols
 # From sanders script, the hugo gene sets
 mapki_genesets_names <- c(
   "MAPKi_INDUCED_EMT",
