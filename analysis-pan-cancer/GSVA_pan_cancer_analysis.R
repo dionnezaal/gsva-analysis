@@ -6,11 +6,7 @@
 ## Load packages for analysis
 library("qusage") # Read gene set file
 # Packages to create network of cancer studies
-library(network)
-library(sna)
 library(ggplot2)
-library(intergraph)
-library(GGally)
 # Packages for heatmap and colors in heatmap
 library("RColorBrewer")
 library("gplots")
@@ -39,63 +35,6 @@ for (cancer_study in 1:ncol(repr_scores)){
   DOWN_genesets_per_cancertype[[name_study]] <- DOWN
 }
 
-## Calculate number of overlapping genesets for each combination of cancer studies
-## separatly for the UP and DOWN genesets and display the overlap in a network
-
-comb_cancertypes <- combn(colnames(repr_scores),2) # Get all pairs of cancer studies/types
-# Appending amount of genesets in common
-UPandDOWN_network <- data.frame(cancer_type1=as.character(), cancer_type2=as.character(), common_genesets=as.integer(), stringsAsFactors = FALSE)
-# Network variable, a 1 will be appended if there is an edge between two cancer studies/types
-network <- data.frame(matrix(ncol=ncol(repr_scores), nrow=ncol(repr_scores)))
-rownames(network) <- colnames(repr_scores)
-colnames(network) <- colnames(repr_scores)
-# Set edges to own cancer study/type to zero
-diag(network) <- 0
-
-edge_sizes <- c()  # Set sizes for edge thickness between studies/types 
-
-for (comb in 1:ncol(comb_cancertypes)){
-  common_UP <- length(intersect(UP_genesets_per_cancertype[[comb_cancertypes[1,comb]]], UP_genesets_per_cancertype[[comb_cancertypes[2,comb]]]))
-  common_DOWN <- length(intersect(DOWN_genesets_per_cancertype[[comb_cancertypes[1,comb]]], DOWN_genesets_per_cancertype[[comb_cancertypes[2,comb]]]))
-  common_both <- as.integer(common_UP + common_DOWN)
-  UPandDOWN_network[comb,] <- c(comb_cancertypes[1,comb], comb_cancertypes[2,comb], common_both)
-  # Put edges in network
-  # More than 20 UP and DOWN genesets should be in common between the gene sets before an edge is shown
-  test_UP <- ifelse(common_UP > 20, 1, 0)
-  test_DOWN <- ifelse(common_DOWN > 20, 1, 0)
-  both <- test_UP + test_DOWN
-  network[UPandDOWN_network$cancer_type1[comb], UPandDOWN_network$cancer_type2[comb]] <- ifelse(both == 2, 1, 0)
-  # Determine edge thickness
-  if (network[UPandDOWN_network$cancer_type1[comb], UPandDOWN_network$cancer_type2[comb]] == 1){
-    edge_sizes <- c(edge_sizes, round((common_UP+common_DOWN)/50)+0.5)
-  }
-  
-  # Give top right of the matrix a zero, so no edge will be drawn
-  # Because the edge will already be drawn 
-  network[UPandDOWN_network$cancer_type2[comb], UPandDOWN_network$cancer_type1[comb]] <- 0
-}
-
-net = network(network, directed=FALSE)
-
-# Give tissue types to specific studies to later color nodes in network by tissue type
-name_tissues <- c(rep("Distinct",ncol(repr_scores)))
-name_tissues[c(which(colnames(repr_scores) %in% c("ov_tcga","ucs_tcga", "cesc_tcga")))] <- "Uterus"
-name_tissues[c(which(colnames(repr_scores) %in% c("kich_tcga", "kirc_tcga", "kirp_tcga")))] <- "Kidney"
-name_tissues[c(which(colnames(repr_scores) %in% c("luad_tcga", "lusc_tcga")))] <- "Lung"
-name_tissues[c(which(colnames(repr_scores) %in% c("pcpg_tcga", "acc_tcga")))] <- "Adrenal gland"
-name_tissues[c(which(colnames(repr_scores) %in% c("gbm_tcga", "lgg_tcga")))] <- "Brain"
-name_tissues[c(which(colnames(repr_scores) %in% c("hnsc_tcga", "skcm_tcga")))] <- "Skin"
-
-# Attach the tissue type to the network
-net %v% "tissues" = name_tissues
-
-# Colors for different tissuetypes
-colors_palette <- c("gray67", colorRampPalette(c("mediumpurple2","cyan2"))(6))
-names(colors_palette) <- c("Distinct", "Uterus", "Kidney", "Lung", "Adrenal gland", "Brain", "Skin")
-
-# Plot network
-ggnet2(net, label=gsub("_tcga", "", colnames(repr_scores)), color="tissues", palette=colors_palette, color.legend="Tissue type", label.size=3, edge.size=edge_sizes, edge.color = "black")
-
 ## Heatmap of all genesets that were identified as UP or DOWN in any of the cancer studies 
 genesets_UPandDOWN <- unique(c(unlist(UP_genesets_per_cancertype, use.names=F), unlist(DOWN_genesets_per_cancertype, use.names=F)))
 
@@ -116,14 +55,12 @@ for (i in 1:length(genesets_UPandDOWN)){
 UPandDOWN <- c(rownames(UP_count)[which(UP_count > 20)], rownames(DOWN_count)[which(DOWN_count > 20)])
 
 # Color columns in heatmap according to tissue type
-tissues <- c(rep("gray67",ncol(repr_scores)))
-color_tissues <- colorRampPalette(c("mediumpurple2","cyan2"))(6)
-tissues[c(which(colnames(repr_scores) %in% c("ov_tcga","ucs_tcga", "cesc_tcga")))] <- color_tissues[1]
-tissues[c(which(colnames(repr_scores) %in% c("kich_tcga", "kirc_tcga", "kirp_tcga")))] <- color_tissues[2]
-tissues[c(which(colnames(repr_scores) %in% c("luad_tcga", "lusc_tcga")))] <- color_tissues[3]
-tissues[c(which(colnames(repr_scores) %in% c("pcpg_tcga", "acc_tcga")))] <-color_tissues[4]
-tissues[c(which(colnames(repr_scores) %in% c("gbm_tcga", "lgg_tcga")))] <- color_tissues[5]
-tissues[c(which(colnames(repr_scores) %in% c("hnsc_tcga", "skcm_tcga")))] <- color_tissues[6]
+tissues <- c(rep("gray",ncol(repr_scores)))
+color_tissues <- c("gray", "#FFA500", "#DCDCDC", "#800080", "#808080")
+tissues[c(which(colnames(repr_scores) %in% c("kich_tcga", "kirc_tcga", "kirp_tcga")))] <- "#FFA500"
+tissues[c(which(colnames(repr_scores) %in% c("luad_tcga", "lusc_tcga")))] <- "#DCDCDC"
+tissues[c(which(colnames(repr_scores) %in% c("pcpg_tcga", "acc_tcga")))] <- "#800080"
+tissues[c(which(colnames(repr_scores) %in% c("gbm_tcga", "lgg_tcga")))] <- "#808080"
 
 # Define colors for GSVA scores in heatmap
 hmcols<-colorRampPalette(c("limegreen","white","deeppink2"))(40)
@@ -142,8 +79,11 @@ types_UPanDOWN[which(UPandDOWN %in% metastasis)] <- color_types[5]
 mutation <- c("KUMAMOTO_RESPONSE_TO_NUTLIN_3A_DN")
 types_UPanDOWN[which(UPandDOWN %in% mutation)] <- color_types[6]
 
-# Plot heatmap
-heatmap.2(as.matrix(repr_scores_UPDOWN[UPandDOWN,]), labCol=strsplit(colnames(repr_scores), "_tcga"), cexCol=1.5, margins=c(8,35), cexRow=1, col=hmcols, trace="none", ColSideColors=tissues, dendrogram="both", RowSideColors=types_UPanDOWN)
+# Plot heatmap all genesets in the C2 collection
+heatmap.2(as.matrix(repr_scores), labRow="", labCol=strsplit(colnames(repr_scores), "_tcga"), margins=c(8,3), cexCol=1.5, cexRow=1, col=hmcols, trace="none", dendrogram="none", Rowv=TRUE, Colv=TRUE)
+
+# Plot heatmap selected genesets
+heatmap.2(as.matrix(repr_scores_UPDOWN[UPandDOWN,]), labCol=strsplit(colnames(repr_scores), "_tcga"), cexCol=1.5, margins=c(8,35), cexRow=1, col=hmcols, trace="none", dendrogram="row", RowSideColors=types_UPanDOWN)
 
 # Plot legends and paste later in heatmap
 plot.new()
@@ -153,15 +93,113 @@ legend("topright",
        title=expression(bold("Gene set groups")),
        title.adj=0.20,
        pch=15,
-       cex=.8,
+       cex=1.2,
        pt.cex=1.5)
 
-plot.new()
-legend("topright",
-       legend=c("Distinct", "Uterus", "Kidney", "Lung", "Adrenal gland", "Brain", "Skin"),
-       col=c("gray67", color_tissues),
-       title=expression(bold("Tissue types")),
-       title.adj=0.20,
-       pch=15,
-       cex=.8,
-       pt.cex=1.5)
+### Check if there are also tissue specific gene sets
+# check with venn diagrams how many overlap there is between the same tissue types, with heatmap 
+# with all studies we can see which genesets might be tissue specific
+
+## kidney
+
+kidney_up <- UP_genesets_per_cancertype[c("kich_tcga","kirc_tcga","kirp_tcga")]
+kidney_down <- DOWN_genesets_per_cancertype[c("kich_tcga","kirc_tcga","kirp_tcga")]
+venn_kidney_up <- venn(kidney_up)
+overlap_up_kidney <- attributes(venn_kidney_up)$intersections$`kich_tcga:kirc_tcga:kirp_tcga`
+venn_kidney_down <- venn(kidney_down)
+overlap_down_kidney <- attributes(venn_kidney_down)$intersections$`kich_tcga:kirc_tcga:kirp_tcga`
+
+# Remove some gene sets for more clear heatmap
+overlap_up_kidney <- overlap_up_kidney[which(overlap_up_kidney %in% c("BIOCARTA_ABSCELL_PATHWAY", "BIOCARTA_BLYMPHOCYTE_PATHWAY", "REACTOME_BETA_DEFENSINS", "REACTOME_DEFENSINS", "BIOCARTA_IL5_PATHWAY", "BUDHU_LIVER_CANCER_METASTASIS_UP", "GALIE_TUMOR_STEMNESS_GENES", "SCHUHMACHER_MYC_TARGETS_DN", "REACTOME_ENDOSOMAL_VACUOLAR_PATHWAY","CHASSOT_SKIN_WOUND", "BRUNEAU_SEPTATION_ATRIAL","ALONSO_METASTASIS_EMT_DN","NAKAMURA_ALVEOLAR_EPITHELIUM","REACTOME_DIGESTION_OF_DIETARY_CARBOHYDRATE","SEIKE_LUNG_CANCER_POOR_SURVIVAL"))]
+
+# heatmap all
+tissues <- c(rep("gray",ncol(repr_scores)))
+tissues[c(which(colnames(repr_scores) %in% c("kich_tcga", "kirc_tcga", "kirp_tcga")))] <- "#FFA500"
+heatmap.2(as.matrix(repr_scores[c(overlap_up_kidney, overlap_down_kidney),sort(colnames(repr_scores))]), labCol=strsplit(colnames(repr_scores), "_tcga"), cexCol=1.5, margins=c(8,35), cexRow=1, col=hmcols, trace="none", ColSideColors=tissues)
+
+## brain
+brain_up <- UP_genesets_per_cancertype[c("gbm_tcga", "lgg_tcga")]
+brain_down <- DOWN_genesets_per_cancertype[c(c("gbm_tcga", "lgg_tcga"))]
+venn_brain_up <- venn(brain_up)
+overlap_up_brain <- attributes(venn_brain_up)$intersections$`gbm_tcga:lgg_tcga`
+venn_brain_down <- venn(brain_down)
+overlap_down_brain <- attributes(venn_brain_down)$intersections$`gbm_tcga:lgg_tcga`
+
+tissues <- c(rep("gray",ncol(repr_scores)))
+tissues[c(which(colnames(repr_scores) %in% c("gbm_tcga", "lgg_tcga")))] <- "#808080"
+# Heatmap with all overlapping gene sets
+heatmap.2(as.matrix(repr_scores[c(overlap_up_brain, overlap_down_brain),sort(colnames(repr_scores))]), cexCol=1.5, margins=c(8,35), cexRow=1, col=hmcols, trace="none", ColSideColors=tissues)
+
+# Smaller heatmap to emphasize the results
+heatmap.2(as.matrix(repr_scores[c("REACTOME_ACETYLCHOLINE_NEUROTRANSMITTER_RELEASE_CYCLE","REACTOME_NOREPINEPHRINE_NEUROTRANSMITTER_RELEASE_CYCLE","REACTOME_DOPAMINE_NEUROTRANSMITTER_RELEASE_CYCLE","REACTOME_GABA_SYNTHESIS_RELEASE_REUPTAKE_AND_DEGRADATION"),sort(colnames(repr_scores))]), labCol=strsplit(colnames(repr_scores), "_tcga"), cexCol=1.5, margins=c(8,35), cexRow=1, col=hmcols, trace="none", ColSideColors=tissues)
+
+## lung
+lung_up <- UP_genesets_per_cancertype[c("luad_tcga", "lusc_tcga")]
+lung_down <- DOWN_genesets_per_cancertype[c("luad_tcga", "lusc_tcga")]
+venn_lung_up <- venn(lung_up)
+overlap_up_lung <- attributes(venn_lung_up)$intersections$`luad_tcga:lusc_tcga`
+venn_lung_down <- venn(lung_down)
+overlap_down_lung <- attributes(venn_lung_down)$intersections$`luad_tcga:lusc_tcga`
+
+tissues <- c(rep("gray67",ncol(repr_scores)))
+tissues[c(which(colnames(repr_scores) %in% c("luad_tcga", "lusc_tcga")))] <- color_tissues[3]
+heatmap.2(as.matrix(repr_scores[c(overlap_up_lung, overlap_down_lung),sort(colnames(repr_scores))]), cexCol=1.5, margins=c(8,35), cexRow=1, col=hmcols, trace="none", ColSideColors=tissues)
+
+## Check if we can find significant differences between the kidney samples and all other samples when looking at all genesets
+wilcox_test_results <- apply(repr_scores, 1, function(x) wilcox.test(x[c("kich_tcga", "kirc_tcga", "kirp_tcga")], x[!(colnames(repr_scores) %in% c("kich_tcga", "kirc_tcga", "kirp_tcga"))])$p.value)
+adj_p_values_holm <- p.adjust(wilcox_test_results, method="holm")  #0 significant results
+length(which(adj_p_values_holm < 0.05))
+
+mean_kidney <- apply(repr_scores[,c("kich_tcga", "kirc_tcga", "kirp_tcga")], 1, mean)
+mean_no_kidney <- apply(repr_scores[,!(colnames(repr_scores) %in% c("kich_tcga", "kirc_tcga", "kirp_tcga"))], 1, mean)
+diff_mean <- mean_kidney - mean_no_kidney
+dat <- data.frame(difference_mean=diff_mean, p_value=-log10(wilcox_test_results))
+
+ggplot()+
+  geom_point(data=dat[which(wilcox_test_results >0.05),], aes(x=difference_mean,y=p_value), colour="gray45", alpha=0.5) + 
+  geom_point(data=dat[which(wilcox_test_results <= 0.05),], aes(x=difference_mean,y=p_value), colour="black", alpha=0.5)
+
+## brain
+wilcox_test_results <- apply(repr_scores, 1, function(x) wilcox.test(x[c("lgg_tcga", "gbm_tcga")], x[!(colnames(repr_scores) %in% c("lgg_tcga", "gbm_tcga"))])$p.value)
+adj_p_values_holm <- p.adjust(wilcox_test_results, method="holm")  # 0 significant differences
+length(which(adj_p_values_holm < 0.05))
+
+mean_brain <- apply(repr_scores[,c("lgg_tcga", "gbm_tcga")], 1, mean)
+mean_no_brain <- apply(repr_scores[,!(colnames(repr_scores) %in% c("lgg_tcga", "gbm_tcga"))], 1, mean)
+diff_mean <- mean_brain - mean_no_brain
+dat <- data.frame(difference_mean=diff_mean, p_value=-log10(wilcox_test_results))
+
+ggplot()+
+  geom_point(data=dat[which(wilcox_test_results >0.05),], aes(x=difference_mean,y=p_value), colour="gray45", alpha=0.5) + 
+  geom_point(data=dat[which(wilcox_test_results <= 0.05),], aes(x=difference_mean,y=p_value), colour="black", alpha=0.5)
+
+
+## lung
+wilcox_test_results <- apply(repr_scores, 1, function(x) wilcox.test(x[c("luad_tcga", "lusc_tcga")], x[!(colnames(repr_scores) %in% c("luad_tcga", "lusc_tcga"))])$p.value)
+adj_p_values_holm <- p.adjust(wilcox_test_results, method="holm")  # 0 significant differences
+length(which(adj_p_values_holm < 0.05))
+
+mean_lung <- apply(repr_scores[,c("luad_tcga", "lusc_tcga")], 1, mean)
+mean_no_lung <- apply(repr_scores[,!(colnames(repr_scores) %in% c("luad_tcga", "lusc_tcga"))], 1, mean)
+diff_mean <- mean_lung - mean_no_lung
+dat <- data.frame(difference_mean=diff_mean, p_value=-log10(wilcox_test_results))
+
+ggplot()+
+  geom_point(data=dat[which(wilcox_test_results >0.05),], aes(x=difference_mean,y=p_value), colour="gray45", alpha=0.5) + 
+  geom_point(data=dat[which(wilcox_test_results <= 0.05),], aes(x=difference_mean,y=p_value), colour="black", alpha=0.5)
+
+
+## adrenal gland
+wilcox_test_results <- apply(repr_scores, 1, function(x) wilcox.test(x[c("pcpg_tcga", "acc_tcga")], x[!(colnames(repr_scores) %in% c("pcpg_tcga", "acc_tcga"))])$p.value)
+adj_p_values_holm <- p.adjust(wilcox_test_results, method="holm")  # 0 significant differences
+length(which(adj_p_values_holm < 0.05))
+
+mean_ag<- apply(repr_scores[,c("pcpg_tcga", "acc_tcga")], 1, mean)
+mean_no_ag <- apply(repr_scores[,!(colnames(repr_scores) %in% c("pcpg_tcga", "acc_tcga"))], 1, mean)
+diff_mean <- mean_ag - mean_no_ag
+dat <- data.frame(difference_mean=diff_mean, p_value=-log10(wilcox_test_results))
+
+ggplot()+
+  geom_point(data=dat[which(wilcox_test_results >0.05),], aes(x=difference_mean,y=p_value), colour="gray45", alpha=0.5) + 
+  geom_point(data=dat[which(wilcox_test_results <= 0.05),], aes(x=difference_mean,y=p_value), colour="black", alpha=0.5)
+
