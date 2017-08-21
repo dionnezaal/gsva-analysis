@@ -49,7 +49,7 @@ west_marker <- c("WEST_ADRENOCORTICAL_TUMOR_MARKERS_UP", "WEST_ADRENOCORTICAL_TU
 sign_results <- c("REACTOME_IL_7_SIGNALING","REACTOME_SYNTHESIS_OF_BILE_ACIDS_AND_BILE_SALTS_VIA_24_HYDROXYCHOLESTEROL","KUMAMOTO_RESPONSE_TO_NUTLIN_3A_DN","KEGG_PRIMARY_BILE_ACID_BIOSYNTHESIS","REACTOME_BETA_DEFENSINS", "REACTOME_DEFENSINS", "GO_BILE_ACID_BIOSYNTHETIC_PROCESS","REACTOME_BILE_ACID_AND_BILE_SALT_METABOLISM", "REACTOME_SYNTHESIS_OF_BILE_ACIDS_AND_BILE_SALTS", "GO_DNA_POLYMERASE_COMPLEX", "INAMURA_LUNG_CANCER_SCC_UP", "MYLLYKANGAS_AMPLIFICATION_HOT_SPOT_1", "BIOCARTA_RANMS_PATHWAY","chr10q")
 all <- c(G2_M, steroids, p53, west, west_marker,sign_results)
 # Give names to the points in the plot to show in legend and match to
-color_variable <- ifelse(adj_p_values_holm > 0.05, "Not significant", "Significant")  
+color_variable <- ifelse(adj_p_values_holm > 0.05, "Not significant", "Significant after correction")  
 color_variable[G2_M] <- "G2/M phase"
 color_variable[steroids] <- "Steroids"
 color_variable[p53] <- "p53"
@@ -68,7 +68,7 @@ ggplot()+
   geom_point(data=dat[rownames(dat)%in%west_marker,], aes(x=difference_mean,y=p_value, colour=color_variable[rownames(dat)%in%west_marker]), size=2) + 
   geom_point(data=dat[rownames(dat)%in%sign_results,], aes(x=difference_mean,y=p_value, colour=color_variable[rownames(dat)%in%sign_results])) + 
   geom_hline(yintercept=1.3, color="red") +
-  scale_colour_manual(values=c("Significant"="darkgrey", "Not significant"="black", "G2/M phase"="#0000FFFF", "Steroids"="#FFFF00FF", "p53" = "#00FF00FF", "West"="#00FFFFFF", "West marker"="#FFDB00FF", "Highlighted significant results"="#FF00FFFF"), breaks=c("Significant", "Not significant", "G2/M phase", "Steroids", "p53", "West", "West marker",  "Highlighted significant results")) +
+  scale_colour_manual(values=c("Significant after correction"="black", "Not significant"="darkgrey", "G2/M phase"="#0000FFFF", "Steroids"="#FFFF00FF", "p53" = "#00FF00FF", "West"="#00FFFFFF", "West marker"="#FFDB00FF", "Highlighted significant results"="#FF00FFFF"), breaks=c("Significant after correction", "Not significant", "G2/M phase", "Steroids", "p53", "West", "West marker",  "Highlighted significant results")) +
   labs(title="GSVA results - TCGA adrenocortical carcinoma",x="Difference in mean GSVA score", y="-log10 pvalue",  col="")+
   theme(plot.title=element_text(hjust=0.5)) +
   xlim(low=-0.6, high=0.6)

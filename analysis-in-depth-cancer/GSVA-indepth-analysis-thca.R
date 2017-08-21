@@ -44,7 +44,7 @@ other_studies <- c("DELYS_THYROID_CANCER_UP","FONTAINE_PAPILLARY_THYROID_CARCINO
 sign_results <- c("GO_MITOCHONDRIAL_ELECTRON_TRANSPORT_CYTOCHROME_C_TO_OXYGEN","chr4p11", "ST_TYPE_I_INTERFERON_PATHWAY", "REACTOME_REGULATION_OF_COMPLEMENT_CASCADE", "HINATA_NFKB_TARGETS_KERATINOCYTE_DN", "GO_CELLULAR_GLUCURONIDATION", "GO_ODORANT_BINDING")
 all <- c(other_studies,nfkappab,wnt,sign_results)
 
-color_variable <- ifelse(adj_p_values_holm > 0.05, "Not significant", "Significant")  
+color_variable <- ifelse(adj_p_values_holm > 0.05, "Not significant", "Significant after correction")  
 color_variable[other_studies] <- "Other thyroid cancer studies"
 color_variable[nfkappab] <- "Nf kappaB"
 color_variable[wnt] <- "Wnt signaling"
@@ -59,7 +59,7 @@ ggplot()+
   geom_point(data=dat[rownames(dat)%in%wnt,], aes(x=difference_mean,y=p_value, colour=color_variable[rownames(dat)%in%wnt]), alpha=0.8, size=2) + 
   geom_point(data=dat[rownames(dat)%in%sign_results,], aes(x=difference_mean,y=p_value, colour=color_variable[rownames(dat)%in%sign_results]), alpha=0.8) + 
   geom_hline(yintercept=1.3, color="red") +
-  scale_colour_manual(values=c("Significant"="darkgrey", "Not significant"="black", "Other thyroid cancer studies"=rainbow(6)[6], "Nf kappaB"=rainbow(6)[3], "Wnt signaling"=rainbow(6)[2], "Translocation"=rainbow(6)[4], "Highlighted significant results"=rainbow(6)[5]), breaks=c("Significant", "Not significant", "Other thyroid cancer studies", "Nf kappaB", "Wnt signaling", "Translocation", "Highlighted significant results")) +
+  scale_colour_manual(values=c("Significant after correction"="black", "Not significant"="darkgrey", "Other thyroid cancer studies"=rainbow(6)[6], "Nf kappaB"=rainbow(6)[3], "Wnt signaling"=rainbow(6)[2], "Translocation"=rainbow(6)[4], "Highlighted significant results"=rainbow(6)[5]), breaks=c("Significant after correction", "Not significant", "Other thyroid cancer studies", "Nf kappaB", "Wnt signaling", "Translocation", "Highlighted significant results")) +
   labs(title="GSVA results - TCGA Thyroid cancer",x="Difference in mean GSVA score", y="-log10 pvalue",  col="")+
   theme(plot.title=element_text(hjust=0.5)) +
   xlim(low=-0.6, high=0.6)
