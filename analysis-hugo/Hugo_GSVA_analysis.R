@@ -74,7 +74,7 @@ genesets_all <- c(mapki_genesets_genes_list, msigdb_symbol_genesets)
 # bootstrap values are not used in the further analysis
 library(GSVA)
 library(snow)
-gsva_result <- gsva(dat.norm, genesets_all, min.sz=10, max.sz=500, method="gsva", rnaseq=TRUE, no.bootstrap=2, parallel.sz=2, parallel.type="SOCK", mx.diff=TRUE)
+gsva_result <- gsva(dat.norm, genesets_all, min.sz=10, max.sz=500, method="gsva", rnaseq=TRUE, no.bootstrap=0, parallel.sz=2, parallel.type="SOCK", mx.diff=TRUE)
 gsva_scores <- data.frame("geneset_id" = rownames(gsva_result$es.obs), gsva_result$es.obs, check.names = F)
 gsva_bootstrap <- data.frame("geneset_id" = rownames(gsva_result$bootstrap$p.vals.sign),gsva_result$bootstrap$p.vals.sign, check.names = F)
 
@@ -108,6 +108,9 @@ zscore_nonresponders <- zscore_nonresponders[,order(colnames(zscore_nonresponder
 zscore_responders <- zscore_responders[,order(colnames(zscore_responders), decreasing=TRUE)]
 all <- cbind(as.matrix(zscore_nonresponders), as.matrix(zscore_responders))
 colnames(all) <- strsplit(as.character(colnames(all)), '.PD1')
+# add IPRES to row names to be able to more clearly distinguish from the other gene sets
+rownames(all) <- c("JAEGER_METASTASIS_UP","MAPKi_INDUCED_EMT_(IPRES)","LEF1_UP.V1_UP_(IPRES)","POOLA_INVASIVE_BREAST_CANCER_UP","YE_METASTATIC_LIVER_CANCER","CHARAFE_BREAST_CANCER_BASAL_VS_MESENCHYMAL_UP_(IPRES)","MAHADEVAN_GIST_MORPHOLOGICAL_SWITCH","VECCHI_GASTRIC_CANCER_ADVANCED_VS_EARLY_UP","LIEN_BREAST_CARCINOMA_METAPLASTIC","LU_TUMOR_ENDOTHELIAL_MARKERS_UP","LU_TUMOR_VASCULATURE_UP","LU_TUMOR_ANGIOGENESIS_UP","ROY_WOUND_BLOOD_VESSEL_UP_(IPRES)","MAPKi_INDUCED_ANGIOGENESIS_(IPRES)","EP_BLOOD_VESS_DEVEL_DN_IN_R","WESTON_VEGFA_TARGETS_12HR_(IPRES)","WESTON_VEGFA_TARGETS_6HR","MAINA_VHL_TARGETS_DN","MS_RESP_TO_HYPOXIA_UP_IN_MAPKi_aPDL1_NR","HARRIS_HYPOXIA","KARAKAS_TGFB1_SIGNALING","JEON_SMAD6_TARGETS_DN","POST_OP_WOUNDHEALING","MISHRA_CARCINOMA_ASSOCIATED_FIBROBLAST_UP","MS_RESP_TO_WOUNDING_UP_IN_MAPKi_aPDL1_NR","DER_IFN_GAMMA_RESPONSE_UP","DER_IFN_ALPHA_RESPONSE_UP","DER_IFN_BETA_RESPONSE_UP","GRANDVAUX_IFN_RESPONSE_NOT_VIA_IRF3","ZHANG_INTERFERON_RESPONSE","NATSUME_RESPONSE_TO_INTERFERON_BETA_UP","RADAEVA_RESPONSE_TO_IFNA1_UP","HECKER_IFNB1_TARGETS")
+
 response <- c(rep("non_responding", 13), rep("responding", 15))
 
 heatmap.2(all, dendrogram="none", trace="none", Rowv=FALSE, Colv=FALSE, ColSideColors= c(ifelse(response == "non_responding", "black", "gray")), col=hmcols, keysize=1, density.info="none", key.xlab="Row Z-score", margins=c(15,30))
@@ -126,3 +129,18 @@ supl_table <- data.frame(diff_median, median_nonresponders, median_responders)
 rownames(supl_table) <- genesets_figure
 supl_table_mean <- data.frame(diff_mean, mean_nonresponders, mean_responders)
 rownames(supl_table_mean) <- genesets_figure
+
+## Boxplot with within group differences
+all <- cbind(as.matrix(gsva_score_nonresponders), as.matrix(gsva_score_responders))
+names(response) <- colnames(all)
+df <- data.frame(all)
+# add IPRES to row names to be able to more clearly distinguish from the other gene sets
+rownames(df) <- c("JAEGER_METASTASIS_UP","MAPKi_INDUCED_EMT_(IPRES)","LEF1_UP.V1_UP_(IPRES)","POOLA_INVASIVE_BREAST_CANCER_UP","YE_METASTATIC_LIVER_CANCER","CHARAFE_BREAST_CANCER_BASAL_VS_MESENCHYMAL_UP_(IPRES)","MAHADEVAN_GIST_MORPHOLOGICAL_SWITCH","VECCHI_GASTRIC_CANCER_ADVANCED_VS_EARLY_UP","LIEN_BREAST_CARCINOMA_METAPLASTIC","LU_TUMOR_ENDOTHELIAL_MARKERS_UP","LU_TUMOR_VASCULATURE_UP","LU_TUMOR_ANGIOGENESIS_UP","ROY_WOUND_BLOOD_VESSEL_UP_(IPRES)","MAPKi_INDUCED_ANGIOGENESIS_(IPRES)","EP_BLOOD_VESS_DEVEL_DN_IN_R","WESTON_VEGFA_TARGETS_12HR_(IPRES)","WESTON_VEGFA_TARGETS_6HR","MAINA_VHL_TARGETS_DN","MS_RESP_TO_HYPOXIA_UP_IN_MAPKi_aPDL1_NR","HARRIS_HYPOXIA","KARAKAS_TGFB1_SIGNALING","JEON_SMAD6_TARGETS_DN","POST_OP_WOUNDHEALING","MISHRA_CARCINOMA_ASSOCIATED_FIBROBLAST_UP","MS_RESP_TO_WOUNDING_UP_IN_MAPKi_aPDL1_NR","DER_IFN_GAMMA_RESPONSE_UP","DER_IFN_ALPHA_RESPONSE_UP","DER_IFN_BETA_RESPONSE_UP","GRANDVAUX_IFN_RESPONSE_NOT_VIA_IRF3","ZHANG_INTERFERON_RESPONSE","NATSUME_RESPONSE_TO_INTERFERON_BETA_UP","RADAEVA_RESPONSE_TO_IFNA1_UP","HECKER_IFNB1_TARGETS")
+
+library(reshape2)
+df.m <- melt(t(df))
+df.m$response <- response[df.m[,1]]
+colnames(df.m) <- c("patient_id", "geneset", "GSVAscore", "response")
+
+within_group <- ggplot(aes(y=GSVAscore, x=geneset, fill=response), data=df.m) + geom_boxplot()
+within_group + scale_fill_manual(values = c('lightgreen', 'darkgreen')) + labs(x=NULL, y="GSVA score", title="Within group variability per geneset") + theme(legend.title=element_blank(), plot.title=element_text(hjust=0.5)) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
