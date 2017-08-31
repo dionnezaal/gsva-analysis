@@ -17,12 +17,18 @@ library("snow")  # To perform parallel analysis
 library("qusage") # To read in geneset file (.gmt)
 library("GSVA") # To perform GSVA analysis
 
-# Get variables from commandline
+# Get arguments from command: 
+# [1] path to datahub files
+# [2] number of cores to use for GSVA
+# [3] name (and path) of gene set file with complete MSigDB collection
+# [4] name (and path) of gene set file with only C2 collection MSigDB
+# [5] TRUE or FALSE inidicating that GSVA scores should be calculated or not
 c_args <- commandArgs(TRUE)
 path_to_datahub <- c_args[1]  # Path to folders with datahub studies (public folder)
 n_cores <- c_args[2]  # numbers of cores to use for GSVA analysis
 geneset_file <- c_args[3] # Gene set file for GSVA should be all collection from msigdb
 c2_geneset_file <- c_args[4] # For the pan cancer analysis only the c2 collection is used
+calc_GSVA <- c_args[5] # In case GSVA still needs to be done this parameter should be set to TRUE, otherwise set to FALSE
 
 ## Studies used in the original analysis
 studies <- c("meso_tcga","kich_tcga","ov_tcga","thym","dlbc_tcga","gbm_tcga","laml_tcga","chol_tcga", 
@@ -56,20 +62,26 @@ repr_scores <- data.frame(study=rep(NA,length(names(c2_genesets))), row.names=na
 
 # For each studies calculate the GSVA score and representative score
 for (i in 1:length(studies)){
-  #!expr_file <- paste0(path_to_datahub, studies[i], "/", gsub("_tcga", "", studies[i]),"/tcga/data_RNA_Seq_v2_expression_median.txt")
-  ## Read and normalize expression file
-  expr_file <- expr_files[i]
-  cat(paste0("\n\n---> Load expression file ", expr_file))
-  expr <- read.delim(expr_file, sep="\t", header=T, row.names=2, quote="")
-  expr <- expr[,-1]
-  expr_norm <- log2(expr + 1)
-  mexp <- rowMeans(expr_norm)
-  expr_norm_high <- expr_norm[mexp > 1, ]
   
-  cat(paste0("\n\n---> Calculate GSVA scores study ",studies[i]),"\n\n")
-  # Calculate original gene set scores
-  gsva_result <- gsva(as.matrix(expr_norm_high), genesets, method="gsva", parallel.sz=n_cores, parallel.type="SOCK")
-  gsva_scores <- gsva_result$es.obs
+  if (calc_GSVA == "TRUE"){
+    expr_file <- paste0(path_to_datahub, studies[i], "/", gsub("_tcga", "", studies[i]),"/tcga/data_RNA_Seq_v2_expression_median.txt")
+    
+    ## Read and normalize expression file
+    cat(paste0("\n\n---> Load expression file ", expr_file))
+    expr <- read.delim(expr_file, sep="\t", header=T, row.names=2, quote="")
+    expr <- expr[,-1]
+    expr_norm <- log2(expr + 1)
+    mexp <- rowMeans(expr_norm)
+    expr_norm_high <- expr_norm[mexp > 1, ]
+    
+    cat(paste0("\n\n---> Calculate GSVA scores study ",studies[i]),"\n\n")
+    # Calculate original gene set scores
+    gsva_result <- gsva(as.matrix(expr_norm_high), genesets, method="gsva", parallel.sz=n_cores, parallel.type="SOCK")
+    gsva_scores <- gsva_result$es.obs
+  } else {
+    gsva_file <- paste0(path_to_datahub, studies[i], "/", gsub("_tcga", "", studies[i]),"/tcga/gsva_scores.txt")
+    gsva_scores <- read.table(gsva_file, row.names = 1, header=TRUE)
+  }
   
   repr_geneset_scores <- c(rep(NA, nrow(gsva_scores)))
   names(repr_geneset_scores) <- rownames(gsva_scores)
