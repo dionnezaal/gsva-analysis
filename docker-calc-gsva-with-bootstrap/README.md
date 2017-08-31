@@ -6,4 +6,4 @@ input variables: expression data file, geneset file, meta expression file, prefi
 
 ``` sudo docker run --rm -v ~/$STUDY_DIRECTORY/:/study:ro -v ~/$OUTPUT_DIRECTORY/:/outdir calc-gsva-bootstrap ./calc_GSVA_with_bootstrap_function.R /study/$EXPRESSION_FILE /study/$GENESET_FILE /study/$META_EXPRESSION_FILE /outdir/$PREFIX_OUTPUT_FILES $NUMBER_OF_CORES $NUMBER_OF_BOOTSTRAPS ```
 
-# The bootstrapping method is explained in: GSVA-bootstrap-method.md
+## The bootstrapping method is explained in: GSVA-bootstrap-method.md
